@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">LondonWeather</string>
+    <string name="tv_today">Today</string>
+    <string name="placeholder_temp">30°</string>
+    <string name="degree_celsius_symbol">%1$s°</string>
+    <string name="placeholder_temp_description">Sunny</string>
+    <string name="placeholder_last_updated">Last updated April 7th</string>
+    <string name="btn_forecast_label">Forecast</string>
+    <string name="refresh_button_description">Button to refresh the current weather data.</string>
 </resources>
