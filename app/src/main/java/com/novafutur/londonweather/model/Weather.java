@@ -2,12 +2,16 @@ package com.novafutur.londonweather.model;
 
 public class Weather {
     private String weatherDescription;
-    private int weatherTemperature;
+    private int weatherTempCurrent;
+    private int weatherTempMin;
+    private int weatherTempMax;
     private String weatherIcon;
 
-    public Weather(String weatherDescription, int weatherTemperature, String weatherIcon) {
+    public Weather(String weatherDescription, int weatherTempCurrent, int weatherTempMin, int weatherTempMax, String weatherIcon) {
         this.weatherDescription = weatherDescription;
-        this.weatherTemperature = weatherTemperature;
+        this.weatherTempCurrent = weatherTempCurrent;
+        this.weatherTempMin = weatherTempMin;
+        this.weatherTempMax = weatherTempMax;
         this.weatherIcon = weatherIcon;
     }
 
@@ -19,12 +23,28 @@ public class Weather {
         this.weatherDescription = weatherDescription;
     }
 
-    public int getWeatherTemperature() {
-        return weatherTemperature;
+    public int getWeatherTempCurrent() {
+        return weatherTempCurrent;
     }
 
-    public void setWeatherTemperature(int weatherTemperature) {
-        this.weatherTemperature = weatherTemperature;
+    public void setWeatherTempCurrent(int weatherTempCurrent) {
+        this.weatherTempCurrent = weatherTempCurrent;
+    }
+
+    public int getWeatherTempMin() {
+        return weatherTempMin;
+    }
+
+    public void setWeatherTempMin(int weatherTempMin) {
+        this.weatherTempMin = weatherTempMin;
+    }
+
+    public int getWeatherTempMax() {
+        return weatherTempMax;
+    }
+
+    public void setWeatherTempMax(int weatherTempMax) {
+        this.weatherTempMax = weatherTempMax;
     }
 
     public String getWeatherIcon() {

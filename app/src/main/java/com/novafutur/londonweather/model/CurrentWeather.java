@@ -4,8 +4,8 @@ public class CurrentWeather extends Weather {
     private double humidity;
     private String dateOfLastUpdate;
 
-    public CurrentWeather(String weatherDescription, int weatherTemperature, double humidity, String dateOfLastUpdate,  String weatherIcon) {
-        super(weatherDescription, weatherTemperature, weatherIcon);
+    public CurrentWeather(String weatherDescription, int weatherTempCurrent, int weatherTempMin, int weatherTempMax, double humidity, String dateOfLastUpdate,  String weatherIcon) {
+        super(weatherDescription, weatherTempCurrent, weatherTempMin, weatherTempMax, weatherIcon);
         this.humidity = humidity;
         this.dateOfLastUpdate = dateOfLastUpdate;
     }

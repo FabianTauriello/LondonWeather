@@ -3,8 +3,8 @@ package com.novafutur.londonweather.model;
 public class Forecast extends Weather {
     private String day;
 
-    public Forecast(String weatherDescription, int weatherTemperature, String day, String weatherIcon) {
-        super(weatherDescription, weatherTemperature, weatherIcon);
+    public Forecast(String weatherDescription, int weatherTempCurrent, int weatherTempMin, int weatherTempMax, String day, String weatherIcon) {
+        super(weatherDescription, weatherTempCurrent, weatherTempMin, weatherTempMax, weatherIcon);
         this.day = day;
     }
 

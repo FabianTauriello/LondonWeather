@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.novafutur.londonweather.R;
 import com.novafutur.londonweather.presenter.Presenter;
@@ -17,10 +18,12 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
 
     private static final String LOG_TAG = MainActivity.class.getName();
 
-    private TextView tvToday, tvDescription, tvTemperature, tvDateLastUpdated;
+    private TextView tvToday, tvDescription, tvTempCurrent, tvTempMin, tvTempMax, tvDateLastUpdated;
     private Button btnForecast;
     private ImageButton btnRefresh;
     private ProgressBar pbRefreshCurrentWeather;
+
+    private ForecastBottomSheetDialogFragment forecastSheet;
 
     private Presenter presenter;
 
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
         setUpViews();
 
         presenter = new Presenter(this);
+        forecastSheet = new ForecastBottomSheetDialogFragment(this, presenter);
         presenter.updateCurrentWeather();
         presenter.updateForecastWeather();
 
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
         btnForecast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                forecastSheet.show(getSupportFragmentManager(), "forecastSheet");
             }
         });
     }
@@ -64,12 +68,19 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
     private void setUpViews() {
         tvToday = findViewById(R.id.tv_today);
         tvDescription = findViewById(R.id.tv_description);
-        tvTemperature = findViewById(R.id.tv_temperature);
+        tvTempCurrent = findViewById(R.id.tv_temp_current);
+        tvTempMin = findViewById(R.id.tv_temp_min);
+        tvTempMax = findViewById(R.id.tv_temp_max);
         tvDateLastUpdated = findViewById(R.id.tv_date_last_updated);
         btnForecast = findViewById(R.id.btn_forecast);
         btnRefresh = findViewById(R.id.btn_refresh);
         pbRefreshCurrentWeather = findViewById(R.id.progress_bar);
 
+
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.add(forecastSheet, "sheet");
+//        transaction.hide(forecastSheet);
+//        transaction.commit();
     }
 
     @Override
@@ -78,8 +89,10 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
     }
 
     @Override
-    public void updateWeatherTemperature(int temperature) {
-        tvTemperature.setText(getString(R.string.degree_celsius_symbol, Integer.toString(temperature)));
+    public void updateWeatherTemperature(int tempCurrent, int tempMin, int tempMax) {
+        tvTempCurrent.setText(getString(R.string.degree_celsius_symbol, Integer.toString(tempCurrent)));
+        tvTempMin.setText(getString(R.string.degree_celsius_symbol, Integer.toString(tempMin)));
+        tvTempMax.setText(getString(R.string.degree_celsius_symbol, Integer.toString(tempMax)));
     }
 
     @Override
@@ -92,5 +105,7 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
         tvDateLastUpdated.setText(date);
     }
 
-    // forecast panel color = #384266
+    public ForecastBottomSheetDialogFragment getForecastSheet() {
+        return forecastSheet;
+    }
 }
