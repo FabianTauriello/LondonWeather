@@ -15,28 +15,33 @@ import com.novafutur.londonweather.model.Forecast;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class acts as the adapter for the weather forecast recycler view.
+ */
 public class ForecastItemAdapter extends RecyclerView.Adapter<ForecastItemAdapter.ForecastViewHolder> {
 
     /**
      * Inner class to represent a single forecast day.
      */
-    public class ForecastViewHolder extends RecyclerView.ViewHolder {
+    static class ForecastViewHolder extends RecyclerView.ViewHolder {
         TextView tvDay;
         TextView tvTemp;
         TextView tvDescription;
+        View divider;
 
-        public ForecastViewHolder(@NonNull View itemView) {
+        ForecastViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDay = itemView.findViewById(R.id.tv_day);
-            tvTemp = itemView.findViewById(R.id.tv_icon_and_temp);
+            tvTemp = itemView.findViewById(R.id.tv_forecast_temp);
             tvDescription = itemView.findViewById(R.id.tv_description);
+            divider = itemView.findViewById(R.id.divider);
         }
     }
 
     private Context context;
     private List<Forecast> forecastItems;
 
-    public ForecastItemAdapter(Context context, ArrayList<Forecast> forecastItems) {
+    ForecastItemAdapter(Context context, ArrayList<Forecast> forecastItems) {
         this.context = context;
         this.forecastItems = forecastItems;
     }
@@ -45,8 +50,7 @@ public class ForecastItemAdapter extends RecyclerView.Adapter<ForecastItemAdapte
     @Override
     public ForecastViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.forecast_recycler_view_item, parent, false);
-        ForecastViewHolder viewHolder = new ForecastViewHolder(itemView);
-        return viewHolder;
+        return new ForecastViewHolder(itemView);
     }
 
     @Override
@@ -57,8 +61,13 @@ public class ForecastItemAdapter extends RecyclerView.Adapter<ForecastItemAdapte
         if (forecastItem != null) {
             // fill the card views with data
             holder.tvDay.setText(forecastItem.getDay());
-            holder.tvTemp.setText(Integer.toString(forecastItem.getWeatherTempCurrent()));
+            holder.tvTemp.setText(context.getString(R.string.degree_celsius_symbol, Integer.toString(forecastItem.getWeatherTempCurrent())));
             holder.tvDescription.setText(forecastItem.getWeatherDescription());
+        }
+
+        // remove bottom divider for last item in recycler view
+        if (position == forecastItems.size() - 1) {
+            holder.divider.setVisibility(View.GONE);
         }
     }
 
@@ -69,11 +78,6 @@ public class ForecastItemAdapter extends RecyclerView.Adapter<ForecastItemAdapte
         } else {
             return 0;
         }
-    }
-
-    public void setForecastItems(ArrayList<Forecast> forecastItems) {
-        this.forecastItems = forecastItems;
-        notifyDataSetChanged();
     }
 
 }

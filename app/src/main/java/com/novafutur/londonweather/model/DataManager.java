@@ -1,10 +1,7 @@
 package com.novafutur.londonweather.model;
 
-import android.app.Activity;
 import android.content.Context;
-import android.media.audiofx.PresetReverb;
-import android.provider.ContactsContract;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,31 +17,33 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
+/**
+ * This class handles API calls and sends the results back to the Presenter class
+ */
 public class DataManager {
-
-    private static final String LOG_TAG = DataManager.class.getName();
-
     private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/";
-
     private static Presenter presenter;
-
     private RequestQueue requestQueue;
 
     public DataManager(Presenter presenter, Context context) {
-        this.presenter = presenter;
+        DataManager.presenter = presenter;
         requestQueue = VolleySingleton.getInstance(context).getRequestQueue();
     }
 
+    /**
+     * Sets up a request to grab the current weather for London. The request is added to a request
+     * queue and once there is a response, the JSON data is processed and sent back to the presenter.
+     */
     public void fetchCurrentWeather() {
         String url = BASE_URL + "weather?id=2643743&units=metric&appid=e6c5283a6cd03ca3bd888fce21b6830d";
 
+        // set up request
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d(LOG_TAG, "onResponse - current");
                 try {
-
                     // get 'weather' object
                     JSONObject weather = response.getJSONArray("weather").getJSONObject(0);
                     String weatherDescription = weather.getString("description");
@@ -56,14 +55,13 @@ public class DataManager {
                     int weatherTempCurrent = (int) Math.round(main.getDouble("temp"));
                     int weatherTempMin = (int) Math.round(main.getDouble("temp_min"));
                     int weatherTempMax = (int) Math.round(main.getDouble("temp_max"));
-                    double weatherHumidity = main.getDouble("humidity");
+                    int weatherHumidity = main.getInt("humidity");
 
                     // get time of data calculation
                     long unixSeconds = response.getLong("dt");
-                    // convert seconds to milliseconds
-                    Date date = new java.util.Date(unixSeconds*1000L);
+                    Date date = new java.util.Date(unixSeconds * 1000L);
                     // format the date
-                    SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                    SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMMM hh:mma", Locale.UK);
                     String formattedDate = sdf.format(date);
 
                     // build current weather object
@@ -77,61 +75,79 @@ public class DataManager {
                             weatherIcon
                     );
 
+                    // pass result back to presenter
                     DataManager.presenter.onFetchCurrentWeatherSuccess(currentWeather);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() { // communication problem with the server
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(LOG_TAG, "onErrorResponse");
+                DataManager.presenter.onFetchCurrentWeatherError(error);
             }
         });
-
+        // add request to queue
         requestQueue.add(request);
     }
 
+    /**
+     * Sets up a request to grab the weather forecast for London. The request is added to a request
+     * queue and once there is a response, the JSON data is processed and sent back to the presenter. The api
+     * provides 3-hour intervals for weather forecasts but I'm only using the weather forecast for 3pm for each day.
+     */
     public void fetchForecastWeather() {
-        Log.d(LOG_TAG, "fetchForecastWeather called");
-        String url = BASE_URL + "forecast?id=2643743&cnt=5&units=metric&appid=e6c5283a6cd03ca3bd888fce21b6830d";
+        String url = BASE_URL + "forecast?id=2643743&units=metric&appid=e6c5283a6cd03ca3bd888fce21b6830d";
 
+        // set up request
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d(LOG_TAG, "onResponse - forecast");
                 ArrayList<Forecast> forecastArrayList = new ArrayList<>();
                 try {
                     // get weather list
                     JSONArray jsonArray = response.getJSONArray("list");
 
-                    for(int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject main = jsonArray.getJSONObject(i).getJSONObject("main");
-                        JSONObject weather = jsonArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
+                    // filter array above to only retrieve the weather forecast for 3pm each day
+                    JSONArray jsonFilteredArray = new JSONArray();
+                    jsonFilteredArray.put(jsonArray.get(5));
+                    jsonFilteredArray.put(jsonArray.get(13));
+                    jsonFilteredArray.put(jsonArray.get(21));
+                    jsonFilteredArray.put(jsonArray.get(29));
+                    jsonFilteredArray.put(jsonArray.get(37));
+
+                    for (int i = 0; i < jsonFilteredArray.length(); i++) {
+                        JSONObject main = jsonFilteredArray.getJSONObject(i).getJSONObject("main");
+                        JSONObject weather = jsonFilteredArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
+                        long unixDate = jsonFilteredArray.getJSONObject(i).getLong("dt");
+                        Date date = new java.util.Date(unixDate * 1000L);
+                        // format the date to show day of week only (e.g. Monday)
+                        SimpleDateFormat sdf = new java.text.SimpleDateFormat("EEEE", Locale.UK);
+                        String dayOfWeek = sdf.format(date);
+                        // build forecast list
                         forecastArrayList.add(new Forecast(
                                 weather.getString("description"),
                                 (int) Math.round(main.getDouble("temp")),
                                 (int) Math.round(main.getDouble("temp_min")),
                                 (int) Math.round(main.getDouble("temp_max")),
-                                "",
-                                weather.getString("icon")
+                                dayOfWeek
                         ));
                     }
                 } catch (JSONException e) {
-                    Log.d(LOG_TAG, "onResponse - forecast - JSONException");
                     e.printStackTrace();
                 }
 
+                // pass result back to presenter
                 DataManager.presenter.onFetchForecastWeatherSuccess(forecastArrayList);
             }
-        }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() { // communication problem with the server
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(LOG_TAG, "onErrorResponse - forecast");
+                // Do nothing here. Presenter.forecast items will be empty and this case is handled in
+                // ForecastBottomSheetDialogFragment where an error message will be shown.
             }
         });
+        // add request to queue
         requestQueue.add(request);
     }
-
-
 }

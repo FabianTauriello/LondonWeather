@@ -3,8 +3,13 @@
     <string name="tv_today">Today</string>
     <string name="placeholder_temp">30°</string>
     <string name="degree_celsius_symbol">%1$s°</string>
+    <string name="humidity_percentage">%1$s%% humidity</string>
+    <string name="time_of_last_update">Time of last update: %1$s</string>
     <string name="placeholder_temp_description">Sunny</string>
     <string name="placeholder_last_updated">Last updated April 7th</string>
-    <string name="btn_forecast_label">Forecast</string>
+    <string name="btn_forecast_label">Open forecast</string>
     <string name="refresh_button_description">Button to refresh the current weather data.</string>
+    <string name="weather_icon_description">weather icon from openweather api</string>
+    <string name="placeholder_humidity">50% chance of humidity</string>
+    <string name="failed_forecast_weather_data_retrieval_message">Failed to load weather forecast data. Close the app and try again later.</string>
 </resources>

@@ -1,31 +1,32 @@
 package com.novafutur.londonweather.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.novafutur.londonweather.R;
 import com.novafutur.londonweather.presenter.Presenter;
+import com.squareup.picasso.Picasso;
 
+/**
+ * This class represents the single screen for the application. The current weather is displayed in the
+ * middle and the weather forecast can be seen by clicking on the 'Open Forecast' button.
+ */
 public class MainActivity extends AppCompatActivity implements Presenter.View {
-
-    private static final String LOG_TAG = MainActivity.class.getName();
-
-    private TextView tvToday, tvDescription, tvTempCurrent, tvTempMin, tvTempMax, tvDateLastUpdated;
+    private TextView tvDescription, tvTempCurrent, tvTempMin, tvTempMax, tvDateLastUpdated, tvHumidityPercentage;
     private Button btnForecast;
     private ImageButton btnRefresh;
     private ProgressBar pbRefreshCurrentWeather;
-
-    private ForecastBottomSheetDialogFragment forecastSheet;
-
+    private ImageView ivWeatherIcon;
+    private ForecastBottomSheetDialogFragment forecastDialogFragment;
     private Presenter presenter;
+    private View vMinMaxDivider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +36,18 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
         setUpViews();
 
         presenter = new Presenter(this);
-        forecastSheet = new ForecastBottomSheetDialogFragment(this, presenter);
+        forecastDialogFragment = new ForecastBottomSheetDialogFragment(this, presenter);
+
+        // fetch current weather and forecast weather data
         presenter.updateCurrentWeather();
         presenter.updateForecastWeather();
 
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(LOG_TAG, "refresh clicked");
                 presenter.updateCurrentWeather();
 
+                // remove the refresh icon and replace with an animating progress bar spinner
                 btnRefresh.setImageResource(0);
                 pbRefreshCurrentWeather.setVisibility(View.VISIBLE);
             }
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
         btnForecast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                forecastSheet.show(getSupportFragmentManager(), "forecastSheet");
+                forecastDialogFragment.show(getSupportFragmentManager(), "forecastSheet");
             }
         });
     }
@@ -65,8 +68,11 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
         return pbRefreshCurrentWeather;
     }
 
+    public View getVMinMaxDivider() {
+        return vMinMaxDivider;
+    }
+
     private void setUpViews() {
-        tvToday = findViewById(R.id.tv_today);
         tvDescription = findViewById(R.id.tv_description);
         tvTempCurrent = findViewById(R.id.tv_temp_current);
         tvTempMin = findViewById(R.id.tv_temp_min);
@@ -75,12 +81,9 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
         btnForecast = findViewById(R.id.btn_forecast);
         btnRefresh = findViewById(R.id.btn_refresh);
         pbRefreshCurrentWeather = findViewById(R.id.progress_bar);
-
-
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.add(forecastSheet, "sheet");
-//        transaction.hide(forecastSheet);
-//        transaction.commit();
+        ivWeatherIcon = findViewById(R.id.weather_icon);
+        tvHumidityPercentage = findViewById(R.id.tv_humidity_percentage);
+        vMinMaxDivider = findViewById(R.id.temp_min_max_divider);
     }
 
     @Override
@@ -96,16 +99,18 @@ public class MainActivity extends AppCompatActivity implements Presenter.View {
     }
 
     @Override
-    public void updateWeatherIcon() {
-
+    public void updateCurrentWeatherIcon(String icon) {
+        Picasso.with(this).load(icon).into(ivWeatherIcon);
     }
 
     @Override
     public void updateDateOfLastUpdate(String date) {
-        tvDateLastUpdated.setText(date);
+        tvDateLastUpdated.setText((getString(R.string.time_of_last_update, date)));
     }
 
-    public ForecastBottomSheetDialogFragment getForecastSheet() {
-        return forecastSheet;
+    @Override
+    public void updateHumidityPercentage(int humidity) {
+        tvHumidityPercentage.setText(getString(R.string.humidity_percentage, Integer.toString(humidity)));
     }
+
 }
