@@ -6,21 +6,21 @@ An Android application built using the MVP architectural pattern and a single ac
 
 Upon opening the app, the user will see the following screen (if the current weather API request was successful):
 
-![](/images/MainActivity.png)
+<img src="/images/MainActivity.png" width="200"/>
 
 And here is an image showing what each UI view is for:
 
-![](/images/MainActivityLabels.png)
+<img src="/images/MainActivityLabels.png" width="200"/>
 
 Note: the "Time of last update" label does NOT change every time a user presses the refresh button. Instead, this value shows the last time OpenWeatherMap updated their weather data (which is no more than one time every 10 minutes).
 
 Clicking on the 'OPEN FORECAST' button will open a fragment showing 5-day forecast if the API request was successful:
 
-![](/images/ForecastFragment.png)
+<img src="/images/ForecastFragment.png" width="200"/>
 
 If the API request was unsuccessful, this error will be shown:
 
-![](/images/ForecastFragmentError.png)
+<img src="/images/ForecastFragmentError.png" width="200"/>
 
 If the current weather API request was unsuccessful, a Toast message will be shown:
 
