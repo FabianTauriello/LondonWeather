@@ -24,8 +24,7 @@ If the API request was unsuccessful, this error will be shown:
 
 If the current weather API request was unsuccessful, a Toast message will be shown:
 
-![](/images/CurrentWeatherToastError.png)
-
+<img src="/images/CurrentWeatherToastError.png" width="200"/>
 
 ## Architecture
 
