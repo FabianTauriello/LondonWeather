@@ -1,6 +1,7 @@
 package com.novafutur.londonweather.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -13,6 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.novafutur.londonweather.R;
 import com.novafutur.londonweather.presenter.Presenter;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class represents the single screen for the application. The current weather is displayed in the

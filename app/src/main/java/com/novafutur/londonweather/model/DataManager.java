@@ -16,6 +16,8 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -44,7 +46,10 @@ public class DataManager {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    // get 'weather' object
+                    // get 'weather' object from response
+                    // Note, it is possible to get more than one weather condition for a requested location.
+                    // but OpenWeather mentions that the first weather condition in the API respond is primary
+                    // so I've used the first index to get the primary object.
                     JSONObject weather = response.getJSONArray("weather").getJSONObject(0);
                     String weatherDescription = weather.getString("description");
                     String weatherIcon = weather.getString("icon");
@@ -105,34 +110,87 @@ public class DataManager {
             public void onResponse(JSONObject response) {
                 ArrayList<Forecast> forecastArrayList = new ArrayList<>();
                 try {
+
+                    // get current date
+                    Date currentDate = Calendar.getInstance().getTime();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+                    String currentDateFormatted = df.format(currentDate);
+
+                    // min_temp numbers for a day
+                    ArrayList<Integer> minTemps = new ArrayList<>();
+                    // max_temp numbers for a day
+                    ArrayList<Integer> maxTemps = new ArrayList<>();
+
                     // get weather list
                     JSONArray jsonArray = response.getJSONArray("list");
 
-                    // filter array above to only retrieve the weather forecast for 3pm each day
-                    JSONArray jsonFilteredArray = new JSONArray();
-                    jsonFilteredArray.put(jsonArray.get(5));
-                    jsonFilteredArray.put(jsonArray.get(13));
-                    jsonFilteredArray.put(jsonArray.get(21));
-                    jsonFilteredArray.put(jsonArray.get(29));
-                    jsonFilteredArray.put(jsonArray.get(37));
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject currentObject = jsonArray.getJSONObject(i);
+                        String responseDateTime = currentObject.getString("dt_txt");
 
-                    for (int i = 0; i < jsonFilteredArray.length(); i++) {
-                        JSONObject main = jsonFilteredArray.getJSONObject(i).getJSONObject("main");
-                        JSONObject weather = jsonFilteredArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
-                        long unixDate = jsonFilteredArray.getJSONObject(i).getLong("dt");
-                        Date date = new java.util.Date(unixDate * 1000L);
-                        // format the date to show day of week only (e.g. Monday)
-                        SimpleDateFormat sdf = new java.text.SimpleDateFormat("EEEE", Locale.UK);
-                        String dayOfWeek = sdf.format(date);
-                        // build forecast list
-                        forecastArrayList.add(new Forecast(
-                                weather.getString("description"),
-                                (int) Math.round(main.getDouble("temp")),
-                                (int) Math.round(main.getDouble("temp_min")),
-                                (int) Math.round(main.getDouble("temp_max")),
-                                dayOfWeek
-                        ));
+                        // check if current object is not current day because forecast data CAN include current day.
+                        if (!responseDateTime.contains(currentDateFormatted)) {
+
+                            // get 'main' object from response
+                            JSONObject main = currentObject.getJSONObject("main");
+                            // get 'weather' object from response
+                            // Note, it is possible to get more than one weather condition for a requested location.
+                            // but OpenWeather mentions that the first weather condition in the API respond is primary
+                            // so I've used the first index to get the primary object.
+                            JSONObject weather = currentObject.getJSONArray("weather").getJSONObject(0);
+
+                            long unixDate = currentObject.getLong("dt");
+                            Date date = new java.util.Date(unixDate * 1000L);
+                            // format the date to show day of week only (e.g. Monday)
+                            SimpleDateFormat sdf = new java.text.SimpleDateFormat("EEEE", Locale.UK);
+                            String dayOfWeek = sdf.format(date);
+
+                            // create forecast objects for the 3pm
+                            if (responseDateTime.contains("15:00:00")) {
+                                forecastArrayList.add(new Forecast(
+                                        weather.getString("description"),
+                                        (int) Math.round(main.getDouble("temp")),
+                                        0,
+                                        0,
+                                        dayOfWeek
+                                ));
+                            }
+
+                            minTemps.add((int) Math.round(main.getDouble("temp_min")));
+                            maxTemps.add((int) Math.round(main.getDouble("temp_max")));
+
+                            // check if it's the last object in the list
+                            if (i != jsonArray.length()-1) {
+                                // get next json object
+                                JSONObject nextObject = jsonArray.getJSONObject(i+1);
+                                // check if the next date in the list is not the same date as the current date
+                                if (!nextObject.getString("dt_txt").substring(0, 10)
+                                        .equals(currentObject.getString("dt_txt").substring(0, 10))) {
+                                    forecastArrayList.get(forecastArrayList.size()-1).setWeatherTempMin(Collections.min(minTemps));
+                                    forecastArrayList.get(forecastArrayList.size()-1).setWeatherTempMax(Collections.max(maxTemps));
+
+                                    // clear these lists for the next day's calculations
+                                    minTemps.clear();
+                                    maxTemps.clear();
+                                }
+                            } else { // last item in list
+
+                                // check if there are less than 5 days in list. If there are less than 5 at this point,
+                                // then it means that the last day's forecast didn't reach 3pm (which is when it is added)
+                                // to the list). So, I just take the latest time and use that as the forecast data instead.
+                                if(forecastArrayList.size() < 5) {
+                                    forecastArrayList.add(new Forecast(
+                                            weather.getString("description"),
+                                            (int) Math.round(main.getDouble("temp")),
+                                            Collections.min(minTemps),
+                                            Collections.max(maxTemps),
+                                            dayOfWeek
+                                    ));
+                                }
+                            }
+                        }
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

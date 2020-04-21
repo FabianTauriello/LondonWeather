@@ -1,65 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#384266">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_day"
-        android:layout_width="200dp"
-        android:layout_height="0dp"
-        android:fontFamily="@font/voltaire"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="0dp"
-        android:textColor="#FAFCFB"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="@+id/ll_forecast"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ll_forecast" />
-
-    <LinearLayout
-        android:id="@+id/ll_forecast"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_day"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="#384266"
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/tv_forecast_temp"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_day"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:fontFamily="@font/voltaire"
-            android:paddingBottom="12dp"
-            android:textAlignment="center"
+            android:gravity="center_vertical"
+            android:text="Monday"
+            android:textAlignment="textStart"
             android:textColor="#FAFCFB"
-            android:textSize="24sp" />
+            android:textSize="36sp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_forecast_temp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/tv_description"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:fontFamily="@font/voltaire"
-            android:paddingTop="12dp"
+            android:gravity="center_vertical"
+            android:text="placeholder"
+            android:textAlignment="textStart"
+            android:textColor="#FAFCFB"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_forecast_temp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_day" />
+
+        <TextView
+            android:id="@+id/tv_forecast_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:fontFamily="@font/voltaire"
+            android:gravity="center_vertical"
+            android:paddingStart="0dp"
+            android:paddingEnd="10dp"
+            android:text="90"
             android:textAlignment="center"
             android:textColor="#FAFCFB"
-            android:textSize="24sp" />
-    </LinearLayout>
+            android:textSize="40sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_forecast_temp_max"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_forecast_temp_max"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/voltaire"
+            android:gravity="center_vertical"
+            android:text="20"
+            android:textAlignment="center"
+            android:textColor="#FAFCFB"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/temp_min_max_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#fafcfb"
+            app:layout_constraintBottom_toTopOf="@+id/tv_forecast_temp_min"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_forecast_temp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_forecast_temp_max" />
+
+        <TextView
+            android:id="@+id/tv_forecast_temp_min"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:fontFamily="@font/voltaire"
+            android:gravity="center_vertical"
+            android:text="10"
+            android:textAlignment="center"
+            android:textColor="#FAFCFB"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tv_forecast_temp_max" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:background="#283150"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
+

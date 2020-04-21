@@ -6,7 +6,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 /**
- * This class is a singleton, used for retrieving a a request queue for processing api calls.
+ * This class is a singleton, used for retrieving a request queue for processing api calls.
  */
 public class VolleySingleton {
     private static VolleySingleton instance;

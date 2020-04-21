@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.novafutur.londonweather.R;
+import com.novafutur.londonweather.model.ForecastItemAdapter;
 import com.novafutur.londonweather.presenter.Presenter;
 
 /**

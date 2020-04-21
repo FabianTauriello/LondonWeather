@@ -33,4 +33,12 @@ public class Weather {
         return weatherTempMax;
     }
 
+    public void setWeatherTempMin(int temp) {
+        weatherTempMin = temp;
+    }
+
+    public void setWeatherTempMax(int temp) {
+        weatherTempMax = temp;
+    }
+
 }
