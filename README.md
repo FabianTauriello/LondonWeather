@@ -2,30 +2,6 @@
 
 An Android application built using the MVP architectural pattern and a single activity to show the current weather and a 5-day forecast for London.
 
-## UI
-
-Upon opening the app, the user will see the following screen (if the current weather API request was successful):
-
-<img src="/images/MainActivity.png" width="200"/>
-
-And here is an image showing what each UI view is for:
-
-<img src="/images/MainActivityLabels.png" width="200"/>
-
-Note: the "Time of last update" label does NOT change every time a user presses the refresh button. Instead, this value shows the last time OpenWeatherMap updated their weather data (which is no more than one time every 10 minutes).
-
-Clicking on the 'OPEN FORECAST' button will open a fragment showing 5-day forecast if the API request was successful:
-
-<img src="/images/ForecastFragment.png" width="200"/>
-
-If the API request was unsuccessful, this error will be shown:
-
-<img src="/images/ForecastFragmentError.png" width="200"/>
-
-If the current weather API request was unsuccessful, a Toast message will be shown:
-
-<img src="/images/CurrentWeatherToastError.png" width="200"/>
-
 ## Architecture
 
 As mentioned, I followed the model view presenter (**MVP**) architectural pattern to build the application. 
@@ -52,6 +28,30 @@ I used the query parameter "units=metric" to retrieve temperature data in degree
 
 There are three basic tests in the application. I've used the Espresso
 library to check if MainActivity opens, check if current weather is displayed, and check if the recycler view displays forecast weather data.
+
+## UI
+
+Upon opening the app, the user will see the following screen (if the current weather API request was successful):
+
+<img src="/images/MainActivity.png" width="200"/>
+
+And here is an image showing what each UI view is for:
+
+<img src="/images/MainActivityLabels.png" width="200"/>
+
+Note: the "Time of last update" label does NOT change every time a user presses the refresh button. Instead, this value shows the last time OpenWeatherMap updated their weather data (which is no more than one time every 10 minutes).
+
+Clicking on the 'OPEN FORECAST' button will open a fragment showing 5-day forecast if the API request was successful:
+
+<img src="/images/ForecastFragment.png" width="200"/>
+
+If the API request was unsuccessful, this error will be shown:
+
+<img src="/images/ForecastFragmentError.png" width="200"/>
+
+If the current weather API request was unsuccessful, a Toast message will be shown:
+
+<img src="/images/CurrentWeatherToastError.png" width="200"/>
 
 ## Areas for improvement
 
